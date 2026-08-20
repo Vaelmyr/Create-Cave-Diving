@@ -1,5 +1,7 @@
-package com.vaelmyr.create_cave_diving;
+package com.vaelmyr.create_cave_diving.client;
 
+import com.vaelmyr.create_cave_diving.AllModelLayers;
+import com.vaelmyr.create_cave_diving.CreateCaveDiving;
 import com.vaelmyr.create_cave_diving.client.model.RespiratorArmorModel;
 
 import net.neoforged.api.distmarker.Dist;

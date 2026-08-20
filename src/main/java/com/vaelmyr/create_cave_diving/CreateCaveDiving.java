@@ -3,11 +3,13 @@ package com.vaelmyr.create_cave_diving;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import com.tterrag.registrate.Registrate;
+import com.vaelmyr.create_cave_diving.config.ServerConfig;
 
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 
 @Mod(CreateCaveDiving.MODID)
 public class CreateCaveDiving {
@@ -22,6 +24,8 @@ public class CreateCaveDiving {
 
     public CreateCaveDiving(IEventBus modEventBus, ModContainer modContainer) {
         LOGGER.info("{} initializing!", NAME);
+
+        modContainer.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
 
         AllItems.register();
     }

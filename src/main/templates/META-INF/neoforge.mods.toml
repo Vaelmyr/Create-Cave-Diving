@@ -24,7 +24,7 @@ displayName = "${mod_name}"  # mandatory
 authors = "Vaelmyr"
 
 description = '''
-Example mod description.
+Adds depth-based breathing hazards and respirator progression to Create, using Create backtanks as an air supply. Hazard levels are fully data-driven and can be customized through datapacks.
 '''
 
 # [[mixins]]
