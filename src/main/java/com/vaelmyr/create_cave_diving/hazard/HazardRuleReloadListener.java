@@ -5,10 +5,16 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.vaelmyr.create_cave_diving.CreateCaveDiving;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.dimension.LevelStem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,31 +82,36 @@ public final class HazardRuleReloadListener extends SimpleJsonResourceReloadList
     private static HazardConditions parseConditions(ResourceLocation id, JsonObject json) {
         validateJsonFields(json, HazardConditions.FIELDS, "conditions for hazard rule '" + id + "'");
 
-        Optional<String> dimension = getOptionalString(json, "dimension");
-        Optional<String> biome = getOptionalString(json, "biome");
+        Optional<RegistrySelector<LevelStem>> dimension = getOptionalSelector(json, "dimension", Registries.LEVEL_STEM);
+        Optional<RegistrySelector<Biome>> biome = getOptionalSelector(json, "biome", Registries.BIOME);
         OptionalInt minY = getOptionalInt(json, "min_y");
         OptionalInt maxY = getOptionalInt(json, "max_y");
 
-        validateLocation("dimension", dimension);
-        validateLocation("biome", biome);
         validateY(minY, maxY);
 
         return new HazardConditions(dimension, biome, minY, maxY);
     }
 
-    private static void validateLocation(String field, Optional<String> value) {
-        if (value.isEmpty())
-            return;
+    private static <T> Optional<RegistrySelector<T>> getOptionalSelector(JsonObject json, String key,
+            ResourceKey<? extends Registry<T>> registry) {
+        if (!json.has(key))
+            return Optional.empty();
 
-        String raw = value.get();
-        if (raw.startsWith("#"))
-            raw = raw.substring(1);
+        String raw = json.get(key).getAsString();
+        boolean isTag = raw.startsWith("#");
+        String locationString = isTag ? raw.substring(1) : raw;
 
-        if (raw.isEmpty())
-            throw new IllegalArgumentException("'" + field + "' tag cannot be empty");
+        if (locationString.isEmpty())
+            throw new IllegalArgumentException("'" + key + "' tag cannot be empty");
 
-        if (ResourceLocation.tryParse(raw) == null)
-            throw new IllegalArgumentException("Invalid '" + field + "' ResourceLocation: " + value.get());
+        ResourceLocation location = ResourceLocation.tryParse(locationString);
+        if (location == null)
+            throw new IllegalArgumentException("Invalid '" + key + "' ResourceLocation: " + raw);
+
+        if (isTag)
+            return Optional.of(RegistrySelector.tag(TagKey.create(registry, location)));
+
+        return Optional.of(RegistrySelector.id(location));
     }
 
     private static void validateY(OptionalInt minY, OptionalInt maxY) {
@@ -108,21 +119,14 @@ public final class HazardRuleReloadListener extends SimpleJsonResourceReloadList
             throw new IllegalArgumentException("'min_y' cannot be greater than 'max_y'");
     }
 
-    private static void validateJsonFields(JsonObject json, Set<String> allowedField, String context) {
+    private static void validateJsonFields(JsonObject json, Set<String> allowedFields, String context) {
         for (String key : json.keySet())
-            if (!allowedField.contains(key))
+            if (!allowedFields.contains(key))
                 throw new IllegalArgumentException("Unknown field '" + key + "' in " + context);
     }
 
     private static HazardConditions emptyConditions() {
         return new HazardConditions(Optional.empty(), Optional.empty(), OptionalInt.empty(), OptionalInt.empty());
-    }
-
-    private static Optional<String> getOptionalString(JsonObject json, String key) {
-        if (!json.has(key))
-            return Optional.empty();
-
-        return Optional.of(json.get(key).getAsString());
     }
 
     private static OptionalInt getOptionalInt(JsonObject json, String key) {
