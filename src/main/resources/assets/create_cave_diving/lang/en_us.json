@@ -1,13 +1,4 @@
 {
-  "itemGroup.create_cave_diving": "Example Mod Tab",
-  "block.create_cave_diving.example_block": "Example Block",
-  "item.create_cave_diving.example_item": "Example Item",
-
-  "create_cave_diving.configuration.title": "Create: Cave Diving Configs",
-  "create_cave_diving.configuration.section.create_cave_diving.common.toml": "Create: Cave Diving Configs",
-  "create_cave_diving.configuration.section.create_cave_diving.common.toml.title": "Create: Cave Diving Configs",
-  "create_cave_diving.configuration.items": "Item List",
-  "create_cave_diving.configuration.logDirtBlock": "Log Dirt Block",
-  "create_cave_diving.configuration.magicNumberIntroduction": "Magic Number Text",
-  "create_cave_diving.configuration.magicNumber": "Magic Number"
+    "item.create_cave_diving.copper_respirator": "Copper Respirator",
+    "item.create_cave_diving.netherite_respirator": "Netherite Respirator"
 }

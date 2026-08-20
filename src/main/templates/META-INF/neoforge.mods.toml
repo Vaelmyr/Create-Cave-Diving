@@ -1,55 +1,60 @@
+modLoader = "javafml"  # mandatory
 
-modLoader="javafml" #mandatory
+loaderVersion = "${loader_version_range}"  # mandatory
 
-loaderVersion="${loader_version_range}" #mandatory
+license = "${mod_license}"
 
-license="${mod_license}"
+# issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
 
-#issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
+[[mods]]  # mandatory
+modId = "${mod_id}"  # mandatory
 
-[[mods]] #mandatory
+version = "${mod_version}"  # mandatory
 
-modId="${mod_id}" #mandatory
+displayName = "${mod_name}"  # mandatory
 
-version="${mod_version}" #mandatory
+# updateJSONURL="https://change.me.example.invalid/updates.json" #optional
 
-displayName="${mod_name}" #mandatory
+# displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
 
-#updateJSONURL="https://change.me.example.invalid/updates.json" #optional
+# logoFile="examplemod.png" #optional
 
-#displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
+# credits="" #optional
 
-#logoFile="examplemod.png" #optional
+authors = "Vaelmyr"
 
-#credits="" #optional
-
-authors="Vaelmyr"
-
-description='''
+description = '''
 Example mod description.
 '''
 
-#[[mixins]]
-#config="${mod_id}.mixins.json"
+# [[mixins]]
+# config="${mod_id}.mixins.json"
 
-#[[accessTransformers]]
-#file="META-INF/accesstransformer.cfg"
+# [[accessTransformers]]
+# file="META-INF/accesstransformer.cfg"
 
 # The coremods config file path is not configurable and is always loaded from META-INF/coremods.json
 
-[[dependencies.${mod_id}]] #optional
-    modId="neoforge" #mandatory
-    type="required" #mandatory
-    versionRange="[${neo_version},)" #mandatory
-    ordering="NONE"
-    side="BOTH"
+[[dependencies.${mod_id}]]  # optional
+    modId = "neoforge"  # mandatory
+    type = "required"  # mandatory
+    versionRange = "[${neo_version},)"  # mandatory
+    ordering = "NONE"
+    side = "BOTH"
 
 [[dependencies.${mod_id}]]
-    modId="minecraft"
+    modId = "minecraft"
+    type = "required"
+    versionRange = "${minecraft_version_range}"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="create"
     type="required"
-    versionRange="${minecraft_version_range}"
+    versionRange="[6.0.10,6.1.0)"
     ordering="NONE"
     side="BOTH"
 
-#[features.${mod_id}]
-#openGLVersion="[3.2,)"
+# [features.${mod_id}]
+# openGLVersion="[3.2,)"
