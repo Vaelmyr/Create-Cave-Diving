@@ -1,0 +1,15 @@
+{
+    "type": "minecraft:smithing_transform",
+    "template": {
+        "item": "minecraft:netherite_upgrade_smithing_template"
+    },
+    "base": {
+        "item": "create_cave_diving:copper_respirator"
+    },
+    "addition": {
+        "item": "minecraft:netherite_ingot"
+    },
+    "result": {
+        "id": "create_cave_diving:netherite_respirator"
+    }
+}
