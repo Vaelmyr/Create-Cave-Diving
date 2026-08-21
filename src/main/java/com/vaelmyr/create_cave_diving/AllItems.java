@@ -19,7 +19,7 @@ public final class AllItems {
 
     public static final ItemEntry<NetheriteRespiratorItem> NETHERITE_RESPIRATOR = REGISTRATE
             .item("netherite_respirator", p -> new NetheriteRespiratorItem(ArmorMaterials.NETHERITE, p))
-            .properties(p -> p.durability(Type.HELMET.getDurability(7))).tag(ItemTags.HEAD_ARMOR).register();
+            .properties(p -> p.durability(Type.HELMET.getDurability(37))).tag(ItemTags.HEAD_ARMOR).register();
 
     public static void register() {
     }
