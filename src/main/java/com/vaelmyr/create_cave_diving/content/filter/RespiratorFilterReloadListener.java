@@ -39,7 +39,7 @@ public final class RespiratorFilterReloadListener extends SimpleJsonResourceRelo
                 if (filters.containsKey(filter.item()))
                     throw new IllegalArgumentException("Duplicate respirator filter item: " + filter.item());
 
-                filters.put(id, filter);
+                filters.put(filter.item(), filter);
             } catch (Exception e) {
                 CreateCaveDiving.LOGGER.error("Failed to load respirator filter {}", id, e);
             }

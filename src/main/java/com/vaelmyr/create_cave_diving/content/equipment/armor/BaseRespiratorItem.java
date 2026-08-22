@@ -164,7 +164,7 @@ public abstract class BaseRespiratorItem extends ArmorItem {
                     .translatable(
                         "tooltip.create_cave_diving.installed_filter",
                         filterName,
-                        filter != null ? filter.tier() : "?"
+                        filter.tier()
                     )
                     .withStyle(ChatFormatting.GRAY)
                 );

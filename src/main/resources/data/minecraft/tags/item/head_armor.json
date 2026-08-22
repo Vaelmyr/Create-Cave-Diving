@@ -1,0 +1,7 @@
+{
+    "replace": false,
+    "values": [
+        "create_cave_diving:copper_respirator",
+        "create_cave_diving:netherite_respirator"
+    ]
+}
