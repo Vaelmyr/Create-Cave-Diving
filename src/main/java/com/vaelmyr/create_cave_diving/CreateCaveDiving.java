@@ -30,8 +30,12 @@ public class CreateCaveDiving {
 
         modContainer.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
 
+        AllDataComponents.register(modEventBus);
+
         AllItems.register();
         AllCreativeModeTabs.register(modEventBus);
+
+        AllEventListeners.register();
     }
 
     public static ResourceLocation asResource(String path) {

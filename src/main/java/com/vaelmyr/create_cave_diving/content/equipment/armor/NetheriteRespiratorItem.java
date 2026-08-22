@@ -7,10 +7,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ArmorMaterial;
 
 public class NetheriteRespiratorItem extends BaseRespiratorItem {
-    private static final ResourceLocation TEXTURE = CreateCaveDiving
-            .asResource("textures/item/netherite_respirator.png");
+    private static final ResourceLocation TEXTURE = CreateCaveDiving.asResource("textures/item/netherite_respirator.png");
 
-    public NetheriteRespiratorItem(Holder<ArmorMaterial> material, Properties properties) {
-        super(material, properties, 2, TEXTURE);
+    public NetheriteRespiratorItem(
+        Holder<ArmorMaterial> material,
+        Properties properties
+    ) {
+        super(
+            material,
+            properties,
+            TEXTURE
+        );
     }
 }

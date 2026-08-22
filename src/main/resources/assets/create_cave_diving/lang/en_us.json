@@ -1,5 +1,13 @@
 {
     "itemGroup.create_cave_diving.base": "Create: Cave Diving",
+
     "item.create_cave_diving.copper_respirator": "Copper Respirator",
-    "item.create_cave_diving.netherite_respirator": "Netherite Respirator"
+    "item.create_cave_diving.netherite_respirator": "Netherite Respirator",
+
+    "item.create_cave_diving.charcoal_filter": "Charcoal Filter",
+    "item.create_cave_diving.layered_filter": "Layered Filter",
+    "item.create_cave_diving.composite_filter": "Composite Filter",
+
+    "tooltip.create_cave_diving.filter_tier": "Tier %s",
+    "tooltip.create_cave_diving.installed_filter": "%s (Tier %s)"
 }

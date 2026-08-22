@@ -19,6 +19,10 @@ public final class AllCreativeModeTabs {
             .displayItems((parameters, output) -> {
                 output.accept(AllItems.COPPER_RESPIRATOR.get());
                 output.accept(AllItems.NETHERITE_RESPIRATOR.get());
+
+                output.accept(AllItems.CHARCOAL_FILTER.get());
+                output.accept(AllItems.LAYERED_FILTER.get());
+                output.accept(AllItems.COMPOSITE_FILTER.get());
             })
             .build());
 

@@ -6,8 +6,10 @@ import com.simibubi.create.content.equipment.armor.BacktankUtil;
 import com.vaelmyr.create_cave_diving.CreateCaveDiving;
 import com.vaelmyr.create_cave_diving.config.ServerConfig;
 import com.vaelmyr.create_cave_diving.content.equipment.armor.BaseRespiratorItem;
+import com.vaelmyr.create_cave_diving.content.filter.RespiratorFilterManager;
 import com.vaelmyr.create_cave_diving.hazard.HazardResolver;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -34,22 +36,27 @@ public final class AirEvents {
         if (hazardLevel <= 0)
             return;
 
-        int respiratorTier = 0;
         ItemStack respirator = BaseRespiratorItem.getWornItem(player);
+        if (respirator.isEmpty()) {
+            event.setCanBreathe(false);
+            return;
+        }
+
+        ResourceLocation filterId = BaseRespiratorItem.getInstalledFilter(respirator);
+        int filterTier = RespiratorFilterManager.getTier(filterId);
+        if (filterTier < hazardLevel) {
+            event.setCanBreathe(false);
+            return;
+        }
+
         List<ItemStack> backtanks = BacktankUtil.getAllWithAir(player);
-
-        if (respirator.getItem() instanceof BaseRespiratorItem respiratorItem)
-            respiratorTier = respiratorItem.getTier();
-
-        boolean canBreatheUnderground = respiratorTier >= hazardLevel && !backtanks.isEmpty();
-
-        if (!canBreatheUnderground) {
+        if (backtanks.isEmpty()) {
             event.setCanBreathe(false);
             return;
         }
 
         int baseInterval = getBaseConsumptionInterval(hazardLevel);
-        int interval = applyRespiratorEfficiency(baseInterval, respiratorTier, hazardLevel);
+        int interval = applyFilterEfficiency(baseInterval, filterTier, hazardLevel);
 
         if (player.level().getGameTime() % interval == 0) {
             BacktankUtil.consumeAir(player, backtanks.get(0), 1);
@@ -68,14 +75,14 @@ public final class AirEvents {
         return (int) Math.max(minimum, interval);
     }
 
-    private static int applyRespiratorEfficiency(int baseInterval, int respiratorTier, int hazardLevel) {
+    private static int applyFilterEfficiency(int baseInterval, int respiratorTier, int hazardLevel) {
         int tierDifference = Math.max(0, respiratorTier - hazardLevel);
 
         if (tierDifference == 0)
             return baseInterval;
 
-        double maxBonus = ServerConfig.MAX_RESPIRATOR_EFFICIENCY_BONUS.get();
-        double falloff = ServerConfig.RESPIRATOR_EFFICIENCY_FALLOFF.get();
+        double maxBonus = ServerConfig.MAX_FILTER_EFFICIENCY_BONUS.get();
+        double falloff = ServerConfig.FILTER_EFFICIENCY_FALLOFF.get();
 
         double efficiencyBonus = maxBonus * tierDifference / (tierDifference + falloff);
         double multiplier = 1.0D + efficiencyBonus;

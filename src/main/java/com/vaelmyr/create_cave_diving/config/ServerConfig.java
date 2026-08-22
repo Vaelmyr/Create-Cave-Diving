@@ -11,8 +11,8 @@ public final class ServerConfig {
     public static final ModConfigSpec.IntValue INTERVAL_REDUCTION_PER_HAZARD;
     public static final ModConfigSpec.IntValue MINIMUM_AIR_INTERVAL;
 
-    public static final ModConfigSpec.DoubleValue MAX_RESPIRATOR_EFFICIENCY_BONUS;
-    public static final ModConfigSpec.DoubleValue RESPIRATOR_EFFICIENCY_FALLOFF;
+    public static final ModConfigSpec.DoubleValue MAX_FILTER_EFFICIENCY_BONUS;
+    public static final ModConfigSpec.DoubleValue FILTER_EFFICIENCY_FALLOFF;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -36,16 +36,16 @@ public final class ServerConfig {
                 .defineInRange("minimumAirInterval", 5, 1, Integer.MAX_VALUE);
 
         builder.pop();
-        builder.push("respiratorEfficiency");
+        builder.push("filterEfficiency");
 
-        MAX_RESPIRATOR_EFFICIENCY_BONUS = builder
-                .comment("Maximum efficiency bonus for using a respirator above the required hazard tier.",
+        MAX_FILTER_EFFICIENCY_BONUS = builder
+                .comment("Maximum efficiency bonus for using a filter above the required hazard tier.",
                         "0.50 means a maximum theoretical bonus of +50%.")
                 .defineInRange("maximumEfficiencyBonus", 0.50D, 0.0D, Double.POSITIVE_INFINITY);
 
-        RESPIRATOR_EFFICIENCY_FALLOFF = builder
+        FILTER_EFFICIENCY_FALLOFF = builder
                 .comment("Controls how quickly diminishing returns apply.",
-                        "Higher values make extra respirator tiers less effective.",
+                        "Higher values make extra filter tiers less effective.",
                         "1.0 gives +25% at one tier above hazard when max bonus is 50%.")
                 .defineInRange("efficiencyFalloff", 1.0D, 0.01D, Double.POSITIVE_INFINITY);
 

@@ -2,6 +2,7 @@ package com.vaelmyr.create_cave_diving;
 
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ArmorItem.Type;
 
 import com.simibubi.create.content.equipment.armor.AllArmorMaterials;
@@ -20,6 +21,11 @@ public final class AllItems {
     public static final ItemEntry<NetheriteRespiratorItem> NETHERITE_RESPIRATOR = REGISTRATE
             .item("netherite_respirator", p -> new NetheriteRespiratorItem(ArmorMaterials.NETHERITE, p))
             .properties(p -> p.durability(Type.HELMET.getDurability(37))).tag(ItemTags.HEAD_ARMOR).register();
+
+    public static final ItemEntry<Item>
+        CHARCOAL_FILTER = REGISTRATE.item("charcoal_filter", Item::new).register(),
+        LAYERED_FILTER = REGISTRATE.item("layered_filter", Item::new).register(),
+        COMPOSITE_FILTER = REGISTRATE.item("composite_filter", Item::new).register();
 
     public static void register() {
     }
