@@ -1,20 +1,8 @@
-<p align="center">
-  <img src="src/main/resources/create_cave_diving.png" alt="Create: Cave Diving" width="256">
-</p>
-
 # Create: Cave Diving
 
-Create: Cave Diving is a Create addon that adds configurable underground breathing hazards and respirator progression while using Create backtanks as the air supply.
+Create: Cave Diving is a Create addon that adds configurable underground breathing hazards, respirators, and tiered filters while using Create backtanks as the air supply.
 
 The hazard system is fully data-driven. Modpacks and datapacks can define any number of hazard levels and decide where they apply by dimension, biome, tags, and Y level.
-
-## Inspiration and Motivation
-
-Create: Cave Diving is inspired by [Thin Air](https://github.com/Fuzss/thinair), but was designed to provide significantly more control over how breathing hazards are defined and scaled.
-
-The mod was originally created for a custom modpack that uses world generation mods capable of extending the Overworld to depths of up to 2048 blocks. In that kind of environment, a fixed or relatively simple altitude-based breathing system is not flexible enough.
-
-For this reason, Create: Cave Diving uses fully data-driven hazard rules that can target specific dimensions, biomes, biome tags, dimension tags, and vertical ranges, with support for priorities and absolute overrides.
 
 ## Requirements
 
@@ -26,21 +14,56 @@ For this reason, Create: Cave Diving uses fully data-driven hazard rules that ca
 
 When a player is inside an active hazard, they must have:
 
-1. A respirator whose tier is at least the current hazard level.
-2. A Create-compatible backtank with air available.
+1. A respirator equipped in the head slot.
+2. A filter installed in that respirator whose tier is at least the current hazard level.
+3. A Create-compatible backtank with air available.
 
-If either requirement is missing, the player cannot breathe because of the Cave Diving hazard.
+If any requirement is missing, the player cannot breathe because of the Cave Diving hazard.
+
+Respirators themselves no longer have protection tiers. Their role is to hold an installed filter, while the filter determines which hazard levels the player can survive.
 
 Cave Diving does not grant underwater breathing by itself. Underwater breathing remains independent, so systems such as Create's Diving Helmet can coexist with the respirator mechanics.
 
+Creative and spectator players are ignored by the hazard system.
+
 ## Built-in respirators
 
-| Item                 | Tier |
-| -------------------- | ---: |
-| Copper Respirator    |    1 |
-| Netherite Respirator |    2 |
+| Item                 |
+| -------------------- |
+| Copper Respirator    |
+| Netherite Respirator |
 
-Hazard levels themselves are not limited to these values. Datapacks may use any non-negative integer hazard level.
+Both respirators use the same filter-tier system. Their material and durability differ, but neither respirator has an inherent hazard-protection tier.
+
+## Built-in filters
+
+| Item             | Default tier |
+| ---------------- | -----------: |
+| Charcoal Filter  |            1 |
+| Layered Filter   |            2 |
+| Composite Filter |            3 |
+
+A filter protects against hazards whose level is less than or equal to its tier.
+
+For example:
+
+```text
+Charcoal Filter (Tier 1)  -> protects against Hazard 1
+Layered Filter (Tier 2)   -> protects against Hazard 1-2
+Composite Filter (Tier 3) -> protects against Hazard 1-3
+```
+
+Hazard and filter tiers are not limited to these built-in values. Datapacks may use higher hazard levels and may redefine filter tiers.
+
+## Installing and removing filters
+
+While wearing a respirator, sneak-use a valid filter item to install it.
+
+Installing another filter replaces the currently installed one and returns the previous filter to the player.
+
+Sneak-use the respirator itself while holding it to remove its installed filter.
+
+The respirator tooltip shows the currently installed filter and its tier, while filter items show their configured tier.
 
 # Datapack guide
 
@@ -49,12 +72,23 @@ Hazard levels themselves are not limited to these values. Datapacks may use any 
 For Minecraft 1.21.1, a minimal datapack can be structured as follows:
 
 ```text
-create_cave_diving_custom_datapack/
+my_cave_diving_pack/
 ├── pack.mcmeta
 └── data/
     └── my_namespace/
         └── hazards/
             └── example.json
+```
+
+Example `pack.mcmeta`:
+
+```json
+{
+  "pack": {
+    "pack_format": 48,
+    "description": "Custom Create: Cave Diving hazards"
+  }
+}
 ```
 
 Hazard rules are loaded from:
@@ -106,11 +140,6 @@ The hazard level can be any non-negative integer:
 ```
 
 There is no hardcoded maximum number of hazard tiers.
-
-> [!IMPORTANT]
-> Hazard levels are not limited to the respirator tiers included by default. However, Create: Cave Diving currently provides only two respirator tiers: Copper (Tier 1) and Netherite (Tier 2).
->
-> As a result, defining Hazard Level 3 or higher will make those areas effectively unbreathable with the mod's default equipment. Unless another mod, addon, or code modification introduces higher-tier respirators, players will not be able to satisfy those hazard requirements.
 
 A rule with no `conditions` is global, so the example above would make Hazard Level 7 apply everywhere unless another rule wins through the precedence system.
 
@@ -195,7 +224,10 @@ Example:
 ```json
 {
   "replace": false,
-  "values": ["minecraft:overworld", "example_mod:deep_world"]
+  "values": [
+    "minecraft:overworld",
+    "example_mod:deep_world"
+  ]
 }
 ```
 
@@ -228,12 +260,14 @@ Modded biomes work the same way:
 Prefix the biome selector with `#`:
 
 ```json
+
 {
   "hazard_level": 3,
   "conditions": {
     "biome": "#my_namespace:dangerous_caves"
   }
 }
+
 ```
 
 Create the corresponding biome tag at:
@@ -247,7 +281,10 @@ Example:
 ```json
 {
   "replace": false,
-  "values": ["minecraft:deep_dark", "example_mod:abyssal_caves"]
+  "values": [
+    "minecraft:deep_dark",
+    "example_mod:abyssal_caves"
+  ]
 }
 ```
 
@@ -330,6 +367,7 @@ An override rule always takes precedence over every matching normal rule, regard
 Example breathable biome:
 
 ```json
+
 {
   "hazard_level": 0,
   "priority": 0,
@@ -359,6 +397,7 @@ This makes the result deterministic without depending on datapack file loading o
 `shallow_depths.json`:
 
 ```json
+
 {
   "hazard_level": 1,
   "priority": 0,
@@ -372,6 +411,7 @@ This makes the result deterministic without depending on datapack file loading o
 `deep_depths.json`:
 
 ```json
+
 {
   "hazard_level": 2,
   "priority": 10,
@@ -443,6 +483,71 @@ A fully breathable biome can then use an absolute override:
 }
 ```
 
+# Filter datapack guide
+
+Respirator filters are also data-driven.
+
+Filter definitions are loaded from:
+
+```text
+data/<namespace>/respirator_filters/*.json
+```
+
+Each definition maps an already registered Minecraft item to a Cave Diving filter tier.
+
+A basic filter definition looks like this:
+
+```json
+{
+  "item": "create_cave_diving:charcoal_filter",
+  "tier": 1
+}
+```
+
+The supported fields are:
+
+| Field  | Type              | Required | Description                                             |
+| ------ | ----------------- | -------- | ------------------------------------------------------- |
+| `item` | resource location | Yes      | Registered item that should act as a respirator filter. |
+| `tier` | integer           | Yes      | Filter protection tier. Must be `1` or greater.         |
+
+This system is not limited to Cave Diving's built-in filter items. Any already registered item from another mod or from a scripting mod such as KubeJS can be declared as a respirator filter.
+
+For example:
+
+```text
+data/my_namespace/respirator_filters/abyssal_filter.json
+```
+
+```json
+{
+  "item": "example_mod:abyssal_filter",
+  "tier": 5
+}
+```
+
+That item will then behave as a Tier 5 respirator filter.
+
+The filename does not determine the item or the tier. The `item` field is the item being registered as a filter.
+
+Filter definitions are reloaded with the normal Minecraft `/reload` command.
+
+## Rebalancing the built-in filters
+
+The built-in progression defaults to Tier 1, Tier 2, and Tier 3, but modpacks can redefine those tiers through datapack filter definitions.
+
+For example, a pack could use:
+
+```text
+Charcoal Filter  -> Tier 1
+Layered Filter   -> Tier 3
+Composite Filter -> Tier 5
+```
+
+and then define intermediate hazard levels that require progression to the next physical filter.
+
+This allows the three built-in items to support much broader progression without hardcoding a maximum hazard tier.
+
 # Server configuration
 
 Cave Diving provides a server config for disabling the system and controlling air consumption.
@@ -457,7 +562,7 @@ baseAirInterval = 40
 intervalReductionPerHazard = 5
 minimumAirInterval = 5
 
-[respiratorEfficiency]
+[filterEfficiency]
 maximumEfficiencyBonus = 0.5
 efficiencyFalloff = 1.0
 ```
@@ -521,16 +626,16 @@ minimumAirInterval = 5
 
 Minimum number of ticks between air consumption events, regardless of how high the hazard level becomes.
 
-## Respirator efficiency and diminishing returns
+## Filter efficiency and diminishing returns
 
-A respirator must have a tier equal to or greater than the hazard level to protect the player.
+The installed filter must have a tier equal to or greater than the hazard level to protect the player.
 
-When the respirator tier is higher than required, the air consumption interval is increased. This gives higher-tier respirators better air efficiency in lower-tier hazards.
+When the installed filter tier is higher than required, the air consumption interval is increased. This gives higher-tier filters better air efficiency in lower-tier hazards.
 
 The bonus is calculated using diminishing returns:
 
 ```text
-tierDifference = respiratorTier - hazardLevel
+tierDifference = filterTier - hazardLevel
 
 bonus = maximumEfficiencyBonus
         * tierDifference
@@ -561,7 +666,7 @@ efficiencyFalloff = 1.0
 
 Controls how quickly the diminishing returns curve approaches the maximum bonus.
 
-Higher values make additional respirator tiers less effective.
+Higher values make additional filter tiers less effective.
 
 With the default maximum bonus of `0.5` and falloff of `1.0`:
 
@@ -569,7 +674,33 @@ With the default maximum bonus of `0.5` and falloff of `1.0`:
 | -------------: | ---------------: |
 |              0 |               0% |
 |             +1 |              25% |
-|             +2 |           ~33.3% |
+|             +2 |          \~33.3% |
 |             +3 |            37.5% |
 |             +4 |              40% |
 |     Very large |   Approaches 50% |
+
+# Datapack validation
+
+Malformed hazard rules are rejected individually and logged as errors. Other valid rules can still load.
+
+Cave Diving validates, among other things:
+
+- Missing `hazard_level`
+- Negative hazard levels
+- Unknown root fields
+- Unknown condition fields
+- Invalid resource locations
+- Empty tags such as `"#"`
+- Non-object `conditions`
+- `min_y` greater than `max_y`
+
+Filter definitions are also validated, including:
+
+- Missing `item` or `tier`
+- Invalid item resource locations
+- Unknown or unregistered items
+- Filter tiers lower than `1`
+- Unknown filter-definition fields
+- Multiple filter definitions targeting the same item
+
+Using `/reload` while developing a datapack is therefore enough to reload the rules and inspect validation errors in the game/server log.
